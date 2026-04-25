@@ -4,7 +4,8 @@ import { Resend } from 'resend'
 const resend = new Resend(process.env.RESEND_API_KEY)
 const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL ?? ''
 
-function buildEmailHtml(itemName: string, reservedBy: string, message?: string): string {
+function buildEmailHtml(itemName: string, reservedBy: string, message?: string, quantity?: number, totalQuantity?: number): string {
+  const showQty = totalQuantity && totalQuantity > 1
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -87,7 +88,7 @@ function buildEmailHtml(itemName: string, reservedBy: string, message?: string):
                             ${itemName}
                           </p>
                           <p style="margin:6px 0 0;font-size:13px;color:#c4968f;">
-                            réservé par <strong style="color:#8a6550;">${reservedBy}</strong>
+                            réservé par <strong style="color:#8a6550;">${reservedBy}</strong>${showQty ? ` &nbsp;·&nbsp; <strong style="color:#7a9e87;">${quantity} / ${totalQuantity}</strong>` : ''}
                           </p>
                         </td>
                       </tr>
@@ -143,21 +144,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true }) // silencieux si non configuré
   }
 
-  let body: { itemName: string; reservedBy: string; message?: string }
+  let body: { itemName: string; reservedBy: string; quantity?: number; totalQuantity?: number; message?: string }
   try {
     body = await req.json()
   } catch {
     return NextResponse.json({ error: 'Requête invalide.' }, { status: 400 })
   }
 
-  const { itemName, reservedBy, message } = body
+  const { itemName, reservedBy, quantity, totalQuantity, message } = body
 
   try {
     await resend.emails.send({
       from: 'Liste de naissance <onboarding@resend.dev>',
       to: [NOTIFY_EMAIL, 'geraldinesika@gmail.com'].filter(Boolean),
-      subject: `🎁 ${reservedBy} a réservé "${itemName}"`,
-      html: buildEmailHtml(itemName, reservedBy, message),
+      subject: quantity && quantity > 1 ? `🎁 ${reservedBy} a réservé ${quantity}× "${itemName}"` : `🎁 ${reservedBy} a réservé "${itemName}"`,
+      html: buildEmailHtml(itemName, reservedBy, message, quantity, totalQuantity),
     })
   } catch (err) {
     console.error('Resend error:', err)
