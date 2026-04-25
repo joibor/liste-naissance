@@ -1,65 +1,176 @@
-import Image from "next/image";
+'use client'
+
+import { useEffect, useState } from 'react'
+import { subscribeToItems } from '@/lib/items'
+import { Item, CATEGORIES } from '@/lib/types'
+import ItemCard from '@/components/ItemCard'
 
 export default function Home() {
+  const [items, setItems] = useState<Item[]>([])
+  const [activeCategory, setActiveCategory] = useState<string>('all')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const unsub = subscribeToItems((data) => {
+      setItems(data)
+      setLoading(false)
+    })
+    return () => unsub()
+  }, [])
+
+  const filtered = activeCategory === 'all' ? items : items.filter((i) => i.category === activeCategory)
+  const total = items.length
+  const reserved = items.filter((i) => i.reserved || i.purchased).length
+  const available = total - reserved
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen" style={{ backgroundColor: 'var(--cream)', position: 'relative', zIndex: 1, maxWidth: '1400px', margin: '0 auto' }}>
+
+      {/* Header */}
+      <header className="text-center px-4 pt-12 pb-10 md:pt-16 md:pb-14">
+        <div className="flex items-center justify-center gap-4 mb-7">
+          <div style={{ height: '1px', width: '40px', background: 'var(--sand)' }} />
+          <span style={{ fontSize: '0.62rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--brown-light)', fontFamily: 'var(--font-lato)' }}>
+            Liste de naissance
+          </span>
+          <div style={{ height: '1px', width: '40px', background: 'var(--sand)' }} />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <h1 className="mb-3" style={{
+          fontFamily: 'var(--font-playfair)',
+          fontSize: 'clamp(2.2rem, 8vw, 3.8rem)',
+          fontWeight: 700,
+          color: 'var(--brown)',
+          lineHeight: 1.1,
+          letterSpacing: '-0.01em',
+        }}>
+          Géraldine<br />& Jonathan
+        </h1>
+
+        <p className="mx-auto mb-8" style={{
+          fontSize: 'clamp(0.8rem, 2.2vw, 0.88rem)',
+          color: 'var(--brown-light)',
+          letterSpacing: '0.03em',
+          maxWidth: '300px',
+          lineHeight: 1.7,
+          fontStyle: 'italic',
+          fontFamily: 'var(--font-playfair)',
+        }}>
+          Réservez l'article de votre choix directement depuis cette page.
+        </p>
+
+        {!loading && (
+          <div className="inline-flex items-center" style={{ border: '1px solid var(--sand)', borderRadius: '999px', background: 'white' }}>
+            <div className="text-center px-5 py-2.5">
+              <p style={{ fontSize: 'clamp(1rem, 3vw, 1.2rem)', fontWeight: 700, color: 'var(--brown)', fontFamily: 'var(--font-playfair)', lineHeight: 1 }}>{total}</p>
+              <p style={{ fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#bbb', marginTop: '3px' }}>articles</p>
+            </div>
+            <div style={{ width: '1px', height: '28px', background: 'var(--sand)' }} />
+            <div className="text-center px-5 py-2.5">
+              <p style={{ fontSize: 'clamp(1rem, 3vw, 1.2rem)', fontWeight: 700, color: 'var(--sage)', fontFamily: 'var(--font-playfair)', lineHeight: 1 }}>{reserved}</p>
+              <p style={{ fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#bbb', marginTop: '3px' }}>réservés</p>
+            </div>
+            <div style={{ width: '1px', height: '28px', background: 'var(--sand)' }} />
+            <div className="text-center px-5 py-2.5">
+              <p style={{ fontSize: 'clamp(1rem, 3vw, 1.2rem)', fontWeight: 700, color: 'var(--rose)', fontFamily: 'var(--font-playfair)', lineHeight: 1 }}>{available}</p>
+              <p style={{ fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#bbb', marginTop: '3px' }}>disponibles</p>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Séparateur */}
+      <div className="px-4">
+        <div className="mx-auto" style={{ maxWidth: '1200px', height: '1px', background: 'linear-gradient(to right, transparent, var(--sand), transparent)' }} />
+      </div>
+
+      {/* Filtres */}
+      <div className="sticky top-0 z-10" style={{
+        background: 'rgba(253,248,243,0.95)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid var(--sand)',
+      }}>
+        <div className="flex overflow-x-auto" style={{ scrollbarWidth: 'none', paddingLeft: '20px', paddingRight: '20px' }}>
+          <FilterTab active={activeCategory === 'all'} onClick={() => setActiveCategory('all')}>
+            Tout <span style={{ opacity: 0.5 }}>({total})</span>
+          </FilterTab>
+          {CATEGORIES.map((cat) => {
+            const count = items.filter((i) => i.category === cat.value).length
+            if (count === 0) return null
+            return (
+              <FilterTab key={cat.value} active={activeCategory === cat.value} onClick={() => setActiveCategory(cat.value)}>
+                {cat.label} <span style={{ opacity: 0.5 }}>({count})</span>
+              </FilterTab>
+            )
+          })}
         </div>
-      </main>
-    </div>
-  );
+      </div>
+
+      {/* Grille */}
+      <div style={{ padding: '16px 12px 64px' }}>
+        {loading ? (
+          <div className="card-grid">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} style={{ borderRadius: '8px', overflow: 'hidden', background: 'white', border: '1px solid var(--sand)' }}>
+                <div className="skeleton" style={{ aspectRatio: '1/1', width: '100%' }} />
+                <div style={{ padding: '12px 13px', display: 'flex', flexDirection: 'column', gap: '7px' }}>
+                  <div className="skeleton" style={{ height: '8px', width: '40%' }} />
+                  <div className="skeleton" style={{ height: '12px', width: '75%' }} />
+                  <div className="skeleton" style={{ height: '12px', width: '55%' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20">
+            <p style={{ color: '#c0b0a8', fontSize: '0.85rem', letterSpacing: '0.04em' }}>Aucun article dans cette catégorie.</p>
+          </div>
+        ) : (
+          <div className="card-grid">
+            {filtered.map((item, i) => (
+              <div key={item.id} className="item-appear" style={{ animationDelay: `${Math.min(i * 50, 350)}ms` }}>
+                <ItemCard item={item} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <footer className="text-center px-4 py-8" style={{ borderTop: '1px solid var(--sand)' }}>
+        <div className="flex items-center justify-center gap-4 mb-3">
+          <div style={{ height: '1px', width: '28px', background: 'var(--sand)' }} />
+          <span style={{ fontSize: '0.58rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#ccc' }}>G & J · 2025</span>
+          <div style={{ height: '1px', width: '28px', background: 'var(--sand)' }} />
+        </div>
+        <a href="/admin" style={{ fontSize: '0.68rem', color: '#d0c8c2', letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none' }}>
+          Admin
+        </a>
+      </footer>
+    </main>
+  )
+}
+
+function FilterTab({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        flexShrink: 0,
+        padding: '14px 18px',
+        background: 'none',
+        border: 'none',
+        borderBottom: active ? '2px solid var(--brown)' : '2px solid transparent',
+        fontSize: '14px',
+        fontWeight: active ? 600 : 400,
+        color: active ? 'var(--brown)' : '#aaa',
+        cursor: 'pointer',
+        transition: 'color 0.18s ease, border-color 0.18s ease',
+        whiteSpace: 'nowrap',
+        letterSpacing: active ? '0.01em' : 0,
+      }}
+    >
+      {children}
+    </button>
+  )
 }
