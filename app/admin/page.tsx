@@ -229,79 +229,73 @@ export default function AdminPage() {
         ) : items.length === 0 ? (
           <div className="text-center py-16" style={{ color: '#bbb', fontSize: '0.85rem' }}>Aucun article.</div>
         ) : (
-          <div className="space-y-2.5">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }} className="admin-grid">
             {items.map((item, index) => (
-              <div key={item.id} className="bg-white rounded-xl overflow-hidden" style={{ border: '1px solid var(--sand)' }}>
+              <div key={item.id} className="bg-white rounded-xl overflow-hidden" style={{ border: '1px solid var(--sand)', display: 'flex', flexDirection: 'column' }}>
 
-                {/* Ligne principale */}
-                <div className="flex gap-3 p-3 items-center">
-                  {/* Photo */}
-                  <div className="rounded-lg overflow-hidden flex-shrink-0" style={{ width: '48px', height: '48px', background: 'var(--cream)' }}>
-                    {item.imageUrl ? (
-                      <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center" style={{ color: 'var(--sand)', fontSize: '1.1rem' }}>○</div>
-                    )}
-                  </div>
-
-                  {/* Infos */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {item.brand && <span style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--rose)' }}>{item.brand}</span>}
-                      {item.purchased ? (
-                        <span style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'var(--sand)', color: 'var(--brown)', padding: '2px 7px', borderRadius: '4px' }}>Acheté</span>
-                      ) : item.reserved ? (
-                        <span style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'var(--sage-light)', color: '#3d6b4f', padding: '2px 7px', borderRadius: '4px' }}>Réservé · {item.reservedBy}</span>
-                      ) : null}
-                    </div>
-                    <p className="font-semibold truncate" style={{ fontFamily: 'var(--font-playfair)', color: 'var(--brown)', fontSize: '0.9rem', margin: '1px 0' }}>{item.name}</p>
-                    <p style={{ fontSize: '0.7rem', color: '#bbb' }}>{CATEGORIES.find((c) => c.value === item.category)?.label}{item.note ? ` · ${item.note}` : ''}</p>
-                  </div>
-
+                {/* Image */}
+                <div style={{ position: 'relative', aspectRatio: '1', background: 'var(--cream)', flexShrink: 0 }}>
+                  {item.imageUrl ? (
+                    <img src={item.imageUrl} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sand)', fontSize: '1.5rem' }}>○</div>
+                  )}
+                  {/* Badge statut */}
+                  {item.purchased ? (
+                    <span style={{ position: 'absolute', top: '7px', left: '7px', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'var(--brown)', color: 'white', padding: '3px 7px', borderRadius: '4px' }}>Acheté</span>
+                  ) : item.reserved ? (
+                    <span style={{ position: 'absolute', top: '7px', left: '7px', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'var(--sage)', color: 'white', padding: '3px 7px', borderRadius: '4px' }}>Réservé</span>
+                  ) : null}
                   {/* Réordonner */}
-                  <div className="flex flex-col gap-1 flex-shrink-0">
-                    <button onClick={() => moveItem(index, -1)} disabled={index === 0} style={{ padding: '4px', border: '1px solid var(--sand)', borderRadius: '5px', background: 'white', cursor: index === 0 ? 'default' : 'pointer', color: index === 0 ? '#e0d8d0' : '#aaa', display: 'flex' }}>
-                      <ArrowUp size={12} />
+                  <div style={{ position: 'absolute', top: '7px', right: '7px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                    <button onClick={() => moveItem(index, -1)} disabled={index === 0} style={{ width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: '4px', background: 'rgba(255,255,255,0.85)', cursor: index === 0 ? 'default' : 'pointer', color: index === 0 ? '#ddd' : '#888' }}>
+                      <ArrowUp size={11} />
                     </button>
-                    <button onClick={() => moveItem(index, 1)} disabled={index === items.length - 1} style={{ padding: '4px', border: '1px solid var(--sand)', borderRadius: '5px', background: 'white', cursor: index === items.length - 1 ? 'default' : 'pointer', color: index === items.length - 1 ? '#e0d8d0' : '#aaa', display: 'flex' }}>
-                      <ArrowDown size={12} />
+                    <button onClick={() => moveItem(index, 1)} disabled={index === items.length - 1} style={{ width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: '4px', background: 'rgba(255,255,255,0.85)', cursor: index === items.length - 1 ? 'default' : 'pointer', color: index === items.length - 1 ? '#ddd' : '#888' }}>
+                      <ArrowDown size={11} />
                     </button>
                   </div>
                 </div>
 
+                {/* Infos */}
+                <div style={{ padding: '10px 10px 8px', flex: 1 }}>
+                  {item.brand && (
+                    <p style={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--rose)', marginBottom: '2px' }}>{item.brand}</p>
+                  )}
+                  <p style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--brown)', fontSize: '0.82rem', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.name}</p>
+                  <p style={{ fontSize: '0.65rem', color: '#bbb', marginTop: '3px' }}>{CATEGORIES.find((c) => c.value === item.category)?.label}</p>
+                  {item.reserved && !item.purchased && item.reservedBy && (
+                    <p style={{ fontSize: '0.65rem', color: 'var(--sage)', fontWeight: 600, marginTop: '2px' }}>→ {item.reservedBy}</p>
+                  )}
+                </div>
+
                 {/* Barre d'actions */}
-                <div style={{ borderTop: '1px solid var(--sand)', background: '#fdfaf7', display: 'flex', alignItems: 'stretch' }}>
+                <div style={{ borderTop: '1px solid var(--sand)', background: '#fdfaf7', display: 'flex', alignItems: 'stretch', marginTop: 'auto' }}>
 
                   {/* Modifier */}
-                  <button
-                    onClick={() => startEdit(item)}
-                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: 'none', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: 'var(--brown)', fontSize: '0.72rem', fontWeight: 600 }}
-                  >
-                    <Pencil size={13} /> Modifier
+                  <button onClick={() => startEdit(item)} title="Modifier" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '9px 4px', background: 'none', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: 'var(--brown)' }}>
+                    <Pencil size={14} />
                   </button>
 
                   {/* Acheté */}
-                  <button
-                    onClick={() => togglePurchased(item)}
-                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: item.purchased ? 'var(--sage-light)' : 'none', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: item.purchased ? '#3d6b4f' : '#999', fontSize: '0.72rem', fontWeight: 600 }}
-                  >
-                    <Check size={13} /> {item.purchased ? 'Acheté' : 'Acheté ?'}
+                  <button onClick={() => togglePurchased(item)} title={item.purchased ? 'Marquer disponible' : 'Marquer acheté'} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '9px 4px', background: item.purchased ? 'var(--sage-light)' : 'none', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: item.purchased ? '#3d6b4f' : '#bbb' }}>
+                    <Check size={14} />
                   </button>
 
-                  {/* Annuler réservation (conditionnel) */}
+                  {/* Annuler réservation */}
                   {item.reserved && !item.purchased && (
                     confirmCancelReserv === item.id ? (
                       <>
-                        <button onClick={() => handleCancelReservation(item.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: '#fff4ec', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: '#c07030', fontSize: '0.72rem', fontWeight: 700 }}>
-                          <Check size={13} /> Confirmer
+                        <button onClick={() => handleCancelReservation(item.id)} title="Confirmer" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '9px 4px', background: '#fff4ec', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: '#c07030' }}>
+                          <Check size={14} />
                         </button>
-                        <button onClick={() => setConfirmCancelReserv(null)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: 'none', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: '#bbb', fontSize: '0.72rem', fontWeight: 600 }}>
-                          <X size={13} /> Annuler
+                        <button onClick={() => setConfirmCancelReserv(null)} title="Annuler" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '9px 4px', background: 'none', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: '#bbb' }}>
+                          <X size={14} />
                         </button>
                       </>
                     ) : (
-                      <button onClick={() => setConfirmCancelReserv(item.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: 'none', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: '#c07030', fontSize: '0.72rem', fontWeight: 600 }}>
-                        <Ban size={13} /> Réservation
+                      <button onClick={() => setConfirmCancelReserv(item.id)} title="Annuler la réservation" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '9px 4px', background: 'none', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: '#c07030' }}>
+                        <Ban size={14} />
                       </button>
                     )
                   )}
@@ -309,16 +303,16 @@ export default function AdminPage() {
                   {/* Supprimer */}
                   {confirmDelete === item.id ? (
                     <>
-                      <button onClick={() => handleDelete(item.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: '#fff0f0', border: 'none', borderRight: '1px solid #fdd', cursor: 'pointer', color: '#e55', fontSize: '0.72rem', fontWeight: 700 }}>
-                        <Check size={13} /> Confirmer
+                      <button onClick={() => handleDelete(item.id)} title="Confirmer" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '9px 4px', background: '#fff0f0', border: 'none', borderRight: '1px solid #fdd', cursor: 'pointer', color: '#e55' }}>
+                        <Check size={14} />
                       </button>
-                      <button onClick={() => setConfirmDelete(null)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: 'none', border: 'none', cursor: 'pointer', color: '#bbb', fontSize: '0.72rem', fontWeight: 600 }}>
-                        <X size={13} /> Annuler
+                      <button onClick={() => setConfirmDelete(null)} title="Annuler" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '9px 4px', background: 'none', border: 'none', cursor: 'pointer', color: '#bbb' }}>
+                        <X size={14} />
                       </button>
                     </>
                   ) : (
-                    <button onClick={() => setConfirmDelete(item.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: 'none', border: 'none', cursor: 'pointer', color: '#e88', fontSize: '0.72rem', fontWeight: 600 }}>
-                      <Trash2 size={13} /> Supprimer
+                    <button onClick={() => setConfirmDelete(item.id)} title="Supprimer" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '9px 4px', background: 'none', border: 'none', cursor: 'pointer', color: '#e88' }}>
+                      <Trash2 size={14} />
                     </button>
                   )}
                 </div>
