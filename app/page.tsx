@@ -47,16 +47,27 @@ export default function Home() {
           Géraldine<br />& Jonathan
         </h1>
 
-        <p className="mx-auto mb-8" style={{
+        <p className="mx-auto mb-3" style={{
           fontSize: 'clamp(0.8rem, 2.2vw, 0.88rem)',
           color: 'var(--brown-light)',
           letterSpacing: '0.03em',
-          maxWidth: '300px',
+          maxWidth: '340px',
           lineHeight: 1.7,
           fontStyle: 'italic',
           fontFamily: 'var(--font-playfair)',
         }}>
-          Réservez l'article de votre choix directement depuis cette page.
+          Un bébé est en chemin…
+        </p>
+
+        <p className="mx-auto mb-8" style={{
+          fontSize: 'clamp(0.75rem, 2vw, 0.82rem)',
+          color: '#bbb',
+          letterSpacing: '0.03em',
+          maxWidth: '360px',
+          lineHeight: 1.8,
+          fontFamily: 'var(--font-lato)',
+        }}>
+          Rendez-vous le <strong style={{ color: 'var(--brown-light)', fontWeight: 600 }}>28 juin 2026</strong> pour découvrir si c'est une petite fille ou un petit garçon.
         </p>
 
         {!loading && (
@@ -140,7 +151,7 @@ export default function Home() {
       <footer className="text-center px-4 py-8" style={{ borderTop: '1px solid var(--sand)' }}>
         <div className="flex items-center justify-center gap-4 mb-3">
           <div style={{ height: '1px', width: '28px', background: 'var(--sand)' }} />
-          <span style={{ fontSize: '0.58rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#ccc' }}>G & J · 2025</span>
+          <span style={{ fontSize: '0.72rem', letterSpacing: '0.04em', color: '#ccc' }}>Fait par ❤️ par Géraldine et Jonathan</span>
           <div style={{ height: '1px', width: '28px', background: 'var(--sand)' }} />
         </div>
         <a href="/admin" style={{ fontSize: '0.68rem', color: '#d0c8c2', letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none' }}>

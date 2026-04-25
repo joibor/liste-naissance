@@ -174,7 +174,6 @@ export default function ItemCard({ item }: Props) {
               className="reserve-btn"
               style={{
                 marginTop: 'auto',
-                paddingTop: '8px',
                 width: '100%',
                 height: '44px',
                 border: `1px solid ${isPartial ? 'var(--sage)' : 'var(--brown)'}`,
