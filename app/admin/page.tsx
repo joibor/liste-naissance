@@ -231,100 +231,96 @@ export default function AdminPage() {
         ) : (
           <div className="space-y-2.5">
             {items.map((item, index) => (
-              <div key={item.id} className="bg-white rounded-xl p-3 flex gap-3 items-start" style={{ border: '1px solid var(--sand)' }}>
+              <div key={item.id} className="bg-white rounded-xl overflow-hidden" style={{ border: '1px solid var(--sand)' }}>
 
-                {/* Photo */}
-                <div className="rounded-lg overflow-hidden flex-shrink-0" style={{ width: '52px', height: '52px', background: 'var(--cream)' }}>
-                  {item.imageUrl ? (
-                    <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center" style={{ color: 'var(--sand)', fontSize: '1.2rem' }}>○</div>
-                  )}
-                </div>
-
-                {/* Infos */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2 flex-wrap">
-                    <div className="min-w-0">
-                      {item.brand && <p className="text-xs uppercase tracking-wide" style={{ color: 'var(--rose)', fontSize: '0.62rem' }}>{item.brand}</p>}
-                      <p className="font-semibold text-sm truncate" style={{ fontFamily: 'var(--font-playfair)', color: 'var(--brown)' }}>{item.name}</p>
-                      <p className="text-xs" style={{ color: '#bbb' }}>
-                        {CATEGORIES.find((c) => c.value === item.category)?.label}
-                      </p>
-                    </div>
-
-                    {/* Statut réservation */}
-                    <div className="flex-shrink-0 text-right">
-                      {item.purchased ? (
-                        <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ background: 'var(--sand)', color: 'var(--brown)', fontSize: '0.68rem' }}>Acheté</span>
-                      ) : item.reserved ? (
-                        <div>
-                          <span className="text-xs font-semibold px-2 py-0.5 rounded" style={{ background: 'var(--sage-light)', color: '#3d6b4f', fontSize: '0.68rem' }}>Réservé</span>
-                          <p className="text-xs mt-0.5" style={{ color: 'var(--sage)', fontWeight: 600 }}>{item.reservedBy}</p>
-                          {item.reservedMessage && <p className="text-xs italic" style={{ color: '#bbb', maxWidth: '120px' }}>« {item.reservedMessage} »</p>}
-                        </div>
-                      ) : (
-                        <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'var(--rose-light)', color: 'var(--rose)', fontSize: '0.68rem' }}>Disponible</span>
-                      )}
-                    </div>
+                {/* Ligne principale */}
+                <div className="flex gap-3 p-3 items-center">
+                  {/* Photo */}
+                  <div className="rounded-lg overflow-hidden flex-shrink-0" style={{ width: '48px', height: '48px', background: 'var(--cream)' }}>
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center" style={{ color: 'var(--sand)', fontSize: '1.1rem' }}>○</div>
+                    )}
                   </div>
-                  {item.note && <p className="text-xs mt-1 truncate" style={{ color: '#ccc' }}>{item.note}</p>}
+
+                  {/* Infos */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {item.brand && <span style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--rose)' }}>{item.brand}</span>}
+                      {item.purchased ? (
+                        <span style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'var(--sand)', color: 'var(--brown)', padding: '2px 7px', borderRadius: '4px' }}>Acheté</span>
+                      ) : item.reserved ? (
+                        <span style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'var(--sage-light)', color: '#3d6b4f', padding: '2px 7px', borderRadius: '4px' }}>Réservé · {item.reservedBy}</span>
+                      ) : null}
+                    </div>
+                    <p className="font-semibold truncate" style={{ fontFamily: 'var(--font-playfair)', color: 'var(--brown)', fontSize: '0.9rem', margin: '1px 0' }}>{item.name}</p>
+                    <p style={{ fontSize: '0.7rem', color: '#bbb' }}>{CATEGORIES.find((c) => c.value === item.category)?.label}{item.note ? ` · ${item.note}` : ''}</p>
+                  </div>
+
+                  {/* Réordonner */}
+                  <div className="flex flex-col gap-1 flex-shrink-0">
+                    <button onClick={() => moveItem(index, -1)} disabled={index === 0} style={{ padding: '4px', border: '1px solid var(--sand)', borderRadius: '5px', background: 'white', cursor: index === 0 ? 'default' : 'pointer', color: index === 0 ? '#e0d8d0' : '#aaa', display: 'flex' }}>
+                      <ArrowUp size={12} />
+                    </button>
+                    <button onClick={() => moveItem(index, 1)} disabled={index === items.length - 1} style={{ padding: '4px', border: '1px solid var(--sand)', borderRadius: '5px', background: 'white', cursor: index === items.length - 1 ? 'default' : 'pointer', color: index === items.length - 1 ? '#e0d8d0' : '#aaa', display: 'flex' }}>
+                      <ArrowDown size={12} />
+                    </button>
+                  </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex flex-col gap-1 flex-shrink-0">
-                  <button onClick={() => startEdit(item)} title="Modifier" style={{ padding: '5px', border: '1px solid var(--sand)', borderRadius: '6px', background: 'white', cursor: 'pointer', color: 'var(--brown)', display: 'flex' }}>
-                    <Pencil size={13} />
+                {/* Barre d'actions */}
+                <div style={{ borderTop: '1px solid var(--sand)', background: '#fdfaf7', display: 'flex', alignItems: 'stretch' }}>
+
+                  {/* Modifier */}
+                  <button
+                    onClick={() => startEdit(item)}
+                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: 'none', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: 'var(--brown)', fontSize: '0.72rem', fontWeight: 600 }}
+                  >
+                    <Pencil size={13} /> Modifier
                   </button>
 
+                  {/* Acheté */}
                   <button
                     onClick={() => togglePurchased(item)}
-                    title={item.purchased ? 'Marquer disponible' : 'Marquer acheté'}
-                    style={{ padding: '5px', border: '1px solid var(--sand)', borderRadius: '6px', background: item.purchased ? 'var(--sage-light)' : 'white', cursor: 'pointer', color: item.purchased ? '#3d6b4f' : '#bbb', display: 'flex' }}
+                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: item.purchased ? 'var(--sage-light)' : 'none', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: item.purchased ? '#3d6b4f' : '#999', fontSize: '0.72rem', fontWeight: 600 }}
                   >
-                    <Check size={13} />
+                    <Check size={13} /> {item.purchased ? 'Acheté' : 'Acheté ?'}
                   </button>
 
-                  {/* Annuler réservation */}
+                  {/* Annuler réservation (conditionnel) */}
                   {item.reserved && !item.purchased && (
                     confirmCancelReserv === item.id ? (
-                      <div className="flex gap-1">
-                        <button onClick={() => handleCancelReservation(item.id)} title="Confirmer annulation" style={{ padding: '5px', background: '#fff0e8', border: '1px solid #f0c8a0', borderRadius: '6px', cursor: 'pointer', color: '#c07030', display: 'flex' }}>
-                          <Check size={13} />
+                      <>
+                        <button onClick={() => handleCancelReservation(item.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: '#fff4ec', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: '#c07030', fontSize: '0.72rem', fontWeight: 700 }}>
+                          <Check size={13} /> Confirmer
                         </button>
-                        <button onClick={() => setConfirmCancelReserv(null)} title="Annuler" style={{ padding: '5px', border: '1px solid var(--sand)', borderRadius: '6px', background: 'white', cursor: 'pointer', color: '#bbb', display: 'flex' }}>
-                          <X size={13} />
+                        <button onClick={() => setConfirmCancelReserv(null)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: 'none', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: '#bbb', fontSize: '0.72rem', fontWeight: 600 }}>
+                          <X size={13} /> Annuler
                         </button>
-                      </div>
+                      </>
                     ) : (
-                      <button onClick={() => setConfirmCancelReserv(item.id)} title="Annuler la réservation" style={{ padding: '5px', border: '1px solid #f0c8a0', borderRadius: '6px', background: 'white', cursor: 'pointer', color: '#c07030', display: 'flex' }}>
-                        <Ban size={13} />
+                      <button onClick={() => setConfirmCancelReserv(item.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: 'none', border: 'none', borderRight: '1px solid var(--sand)', cursor: 'pointer', color: '#c07030', fontSize: '0.72rem', fontWeight: 600 }}>
+                        <Ban size={13} /> Réservation
                       </button>
                     )
                   )}
 
                   {/* Supprimer */}
                   {confirmDelete === item.id ? (
-                    <div className="flex gap-1">
-                      <button onClick={() => handleDelete(item.id)} title="Confirmer suppression" style={{ padding: '5px', background: '#fdd', border: '1px solid #fbb', borderRadius: '6px', cursor: 'pointer', color: '#e55', display: 'flex' }}>
-                        <Check size={13} />
+                    <>
+                      <button onClick={() => handleDelete(item.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: '#fff0f0', border: 'none', borderRight: '1px solid #fdd', cursor: 'pointer', color: '#e55', fontSize: '0.72rem', fontWeight: 700 }}>
+                        <Check size={13} /> Confirmer
                       </button>
-                      <button onClick={() => setConfirmDelete(null)} title="Annuler" style={{ padding: '5px', border: '1px solid var(--sand)', borderRadius: '6px', background: 'white', cursor: 'pointer', color: '#bbb', display: 'flex' }}>
-                        <X size={13} />
+                      <button onClick={() => setConfirmDelete(null)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: 'none', border: 'none', cursor: 'pointer', color: '#bbb', fontSize: '0.72rem', fontWeight: 600 }}>
+                        <X size={13} /> Annuler
                       </button>
-                    </div>
+                    </>
                   ) : (
-                    <button onClick={() => setConfirmDelete(item.id)} title="Supprimer" style={{ padding: '5px', border: '1px solid #fdd', borderRadius: '6px', background: 'white', cursor: 'pointer', color: '#e88', display: 'flex' }}>
-                      <Trash2 size={13} />
+                    <button onClick={() => setConfirmDelete(item.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', padding: '9px 6px', background: 'none', border: 'none', cursor: 'pointer', color: '#e88', fontSize: '0.72rem', fontWeight: 600 }}>
+                      <Trash2 size={13} /> Supprimer
                     </button>
                   )}
-
-                  <button onClick={() => moveItem(index, -1)} disabled={index === 0} title="Monter" style={{ padding: '5px', border: '1px solid var(--sand)', borderRadius: '6px', background: 'white', cursor: index === 0 ? 'default' : 'pointer', color: index === 0 ? '#e0d8d0' : 'var(--brown)', display: 'flex' }}>
-                    <ArrowUp size={13} />
-                  </button>
-                  <button onClick={() => moveItem(index, 1)} disabled={index === items.length - 1} title="Descendre" style={{ padding: '5px', border: '1px solid var(--sand)', borderRadius: '6px', background: 'white', cursor: index === items.length - 1 ? 'default' : 'pointer', color: index === items.length - 1 ? '#e0d8d0' : 'var(--brown)', display: 'flex' }}>
-                    <ArrowDown size={13} />
-                  </button>
                 </div>
               </div>
             ))}
